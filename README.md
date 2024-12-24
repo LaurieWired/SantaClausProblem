@@ -1,5 +1,9 @@
 # Santa Claus Problem :santa:
 
+<video src="https://github.com/LaurieWired/SantaClausProblem/blob/main/images/SantaDemo.mp4" controls autoplay loop>
+Your browser does not support the video tag.
+</video>
+
 This repository demonstrates the classic concurrency puzzle known as the Santa Claus Problem, originally described by John Trono. The problem requires synchronizing Santa, nine Reindeer returning from vacation, and a group of Elves needing Santa's help — ensuring that Santa only wakes up under the proper conditions. It highlights important concurrency concepts like resource sharing, scheduling, and synchronization constraints.
 
 ## What's in this repo? :mag_right:
