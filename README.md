@@ -10,8 +10,8 @@ This repository demonstrates the classic concurrency puzzle known as the Santa C
 
 1. **C++ Code**  
    - Provides two versions of the Santa Claus solution:
-     - The original approach (contains a known scheduling assumption bug).
-     - A fixed, more robust approach that properly handles real-world thread scheduling.
+     - [santa_bug.cpp](https://github.com/LaurieWired/SantaClausProblem/blob/main/santa_bug.cpp) - The original approach (contains a known scheduling assumption bug).
+     - [santa.cpp](https://github.com/LaurieWired/SantaClausProblem/blob/main/santa.cpp) - A fixed solution properly handling the bug.
 
 2. **Python Visualization**  
    - A Tkinter-based GUI that launches the C++ program in the background and animates Santa, Reindeer, and Elves.
