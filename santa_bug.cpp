@@ -1,8 +1,8 @@
 /*
     Compile with:
-      clang++ -std=c++20 -stdlib=libc++ -o santa santa.cpp
+      clang++ -std=c++20 -stdlib=libc++ -o santa santa_bug.cpp
     or
-      g++ -std=c++20 -o santa santa.cpp
+      g++ -std=c++20 -o santa santa_bug.cpp
 */
 
 #include <iostream>
@@ -66,11 +66,6 @@ static std::counting_semaphore<9999> elfDone(0);
 static std::mutex printMutex;
 
 // ------------------------------------------------------------
-// New Semaphore to fix bug
-// ------------------------------------------------------------
-static std::counting_semaphore<9999> lastReindeerSem(0);
-
-// ------------------------------------------------------------
 // Utility: safe print
 // ------------------------------------------------------------
 void safePrint(const std::string &msg)
@@ -113,26 +108,21 @@ void santaThread()
             safePrint("[Santa] All reindeer have arrived! Preparing the sleigh...");
             reindeerCount = 0;    // reset the count
 
-            // Let each of the first 8 reindeer proceed
-            for (int i = 0; i < NUM_REINDEER - 1; i++) {
+            // Let each reindeer proceed
+            for (int i = 0; i < NUM_REINDEER; i++) {
                 reindeerSem.release();
             }
 
             lock.unlock();
-
             // Simulate delivering
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-            // Let all 9 reindeer proceed
-            for (int i = 0; i < NUM_REINDEER; i++) {
-                lastReindeerSem.release();
-            }
+            lock.lock();
 
             safePrint("[Santa] Done delivering toys; back to sleep!");
         }
         else if (elfCount == 3)
         {
-            // Handle elves as before (unchanged)
+            // 3 elves arrived (the 3rd elf woke Santa)
             safePrint("[Santa] 3 elves need help. Letting them in...");
 
             // Release the first 2 elves that were waiting on santaSignal
@@ -162,8 +152,8 @@ void santaThread()
         }
         else
         {
-            // Handle spurious wakeups or partial groups (unchanged)
-            safePrint("[Santa] Woke up, but ReindeerCount="
+            // Possibly a spurious wakeup or partial group
+            safePrint("[Santa] Woke up, but ReindeerCount=" 
                       + std::to_string(reindeerCount) + ", ElfCount=" + std::to_string(elfCount));
         }
     }
@@ -191,11 +181,7 @@ void reindeerThread(int id)
             }
         }
         // Wait until Santa harnesses us
-        if (reindeerCount == NUM_REINDEER) {
-            lastReindeerSem.acquire();  // Wait on the special new semaphore
-        } else {
-            reindeerSem.acquire();
-        }
+        reindeerSem.acquire(); // <- Bug right here - what if this is called after santa is releasing the reindeer?
 
         // Deliver toys
         safePrint("[Reindeer " + std::to_string(id) + "] Delivering toys...");
