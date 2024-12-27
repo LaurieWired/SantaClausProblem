@@ -123,10 +123,8 @@ void santaThread()
             // Simulate delivering
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-            // Let all 9 reindeer proceed
-            for (int i = 0; i < NUM_REINDEER; i++) {
-                lastReindeerSem.release();
-            }
+            // Let the last reindeer proceed
+            lastReindeerSem.release();
 
             safePrint("[Santa] Done delivering toys; back to sleep!");
         }
